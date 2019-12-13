@@ -5,27 +5,65 @@
 
  */
 import React, { Component } from 'react';
-import {FlatList, Text, View, Image, TextInput, ActivityIndicator } from 'react-native';
-
+import {FlatList, View, Image, TextInput, ActivityIndicator } from 'react-native';
+import { Container, Header, Title, Content, Footer, FooterTab, Button, Left, Right, Body, Icon, List, ListItem, Text, Spinner  } from 'native-base';
+import {createAppContainer} from 'react-navigation';
+import {createStackNavigator} from 'react-navigation-stack';
 import Trakt from "./src/services/trakt";
 
-class Greeting extends Component {
+class DetailScreen extends React.Component {
+  constructor(props) {
+    super(props);
+  }
+  
+  static navigationOptions = {
+    // header: (
+    //   <Header>
+    //     <Left>
+    //       <Button transparent>
+    //         <Icon name="ios-arrow-back" onPress={() => this.props.navigate.goBack()} />
+    //       </Button>
+    //     </Left>
+    //     <Body>
+    //       <Title>Header</Title>
+    //     </Body>
+    //     <Right />
+    //   </Header>
+    // )
+  }
   render() {
+    const {navigate} = this.props.navigation;
     return (
-      <View style={{alignItems: 'center', flex: 1}}>
+      <Container>
         <Text onPress={() => {alert(this.props.name);}} style={{flex: 1}} >Hello {this.props.name}!</Text>
-      </View>
+      </Container>
     );
   }
 }
 
-export default class App extends Component {
+
+
+class TraktList extends React.Component {
+  static navigationOptions = {
+    header: (
+      <Header>
+        <Left>
+          <Button transparent>
+            <Icon name="menu" />
+          </Button>
+        </Left>
+        <Body>
+          <Title>Header</Title>
+        </Body>
+        <Right />
+      </Header>
+    )
+  }
+
   constructor(props) {
     super(props);
     this.state = {
       isLoading: true,
-      text: 'alex',
-      random: 'test',
     };
   }
 
@@ -56,36 +94,40 @@ export default class App extends Component {
     let pic = {
       uri: 'https://upload.wikimedia.org/wikipedia/commons/d/de/Bananavarieties.jpg'
     };
-    console.log('test');
+    const {navigate} = this.props.navigation;
     if (this.state.isLoading) {
       return (
-        <View style={{flex: 1, paddingTop: 20}}>
-          <ActivityIndicator />
-        </View>
+        <Container>
+           <Spinner color='blue' />
+        </Container>
       );
     }
 
     return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <FlatList
-          data={this.state.dataSource}
-          renderItem={({item}) => <Text>{item.title}</Text>}
-          keyExtractor={(item, index) => item.ids.trakt.toString()}
-        />
-        {/* <Text>{this.state.items[0].title}</Text> */}
-        {/* <Text>{this.state.text}</Text>
-        <TextInput
-          style={{height: 40}}
-          placeholder="Type here to translate!"
-          onChangeText={(text) => this.setState({text})}
-          value={this.state.text}
-        />
-        <Image source={pic} style={{width: 193, height: 110}}/>
-        <Greeting name="Rexxar" />
-        <Greeting style={{flex: 2}} name="Jaina" />
-        <Greeting name="Valeera" style={{flex: 3}}/>
-        <Greeting name={this.state.text} style={{flex: 4}} /> */}
-      </View>
+      <Container>
+        {/* <Content> */}
+          <List
+            dataArray={this.state.dataSource}
+            renderItem={({item}) => <ListItem onPress={() => navigate('Detail', {name: 'Jane'})}><Text>{item.title}</Text></ListItem>}
+            keyExtractor={(item, index) => item.ids.trakt.toString()}
+          />
+        {/* </Content> */}
+        <Footer>
+          <FooterTab>
+            <Button full>
+              <Text>Footer</Text>
+            </Button>
+          </FooterTab>
+        </Footer>
+      </Container>
     );
   }
 }
+
+const MainNavigator = createStackNavigator({
+  List: {screen: TraktList},
+  Detail: {screen: DetailScreen},
+});
+
+const App = createAppContainer(MainNavigator);
+export default App;
