@@ -38,7 +38,7 @@ class DetailScreen extends React.Component {
     const {navigate} = this.props.navigation;
     return (
       <Container>
-        <Text onPress={() => {alert(this.state.title);}} style={{flex: 1}} >Hello {this.props.title}!</Text>
+        <Text onPress={() => {alert(this.state.title);}} style={{flex: 1}} >Hello {this.props.navigation.getParam("title")}!</Text>
       </Container>
     );
   }
@@ -66,7 +66,7 @@ class TraktList extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      isLoading: true,
+      isLoading: false,
     };
   }
 
@@ -111,8 +111,9 @@ class TraktList extends React.Component {
         {/* <Content> */}
           <List
             dataArray={this.state.dataSource}
-            renderItem={({item}) => <ListItem onPress={() => navigate('Detail', {title: "item.title"})}><Text>{item.title}</Text></ListItem>}
+            renderItem={({item}) => <ListItem onPress={() => navigate('Detail', {title: item.title})}><Text>{item.title}</Text></ListItem>}
             keyExtractor={(item, index) => item.ids.trakt.toString()}
+            button="true"
           />
         {/* </Content> */}
         <Footer>
